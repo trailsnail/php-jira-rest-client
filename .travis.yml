@@ -22,9 +22,11 @@ jobs:
   include:
     - php: 7.2
       env: TYPE=phpstan
-      install:
-        - mkdir -p "$HOME/.phpstan"
-        - composer require --dev phpstan/phpstan-shim --working-dir "$HOME/.phpstan"
       script:
         - composer install
         - vendor/bin/phpstan analyse
+
+matrix:
+#  allow_failures:
+#    - php: 7.5
+  fast_finish: true
