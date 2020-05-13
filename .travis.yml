@@ -4,6 +4,9 @@ jobs:
   include:
     - php: 7.1
         env: TYPE=phpstan
-        script:
-          - composer install
-          - vendor/bin/phpstan analyse
+          install:
+            - mkdir -p "$HOME/.phpstan"
+            - composer require --dev phpstan/phpstan-shim --working-dir "$HOME/.phpstan"
+          script:
+            - composer install
+            - vendor/bin/phpstan analyse
