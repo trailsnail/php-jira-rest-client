@@ -21,9 +21,9 @@ script:
 matrix:
 #  allow_failures:
 #    - php: 7.5
-  include:
     - php: 7.1
-        name: phpstan
+        env: TYPE=phpstan
         script:
+          - composer install
           - vendor/bin/phpstan analyse
   fast_finish: true
