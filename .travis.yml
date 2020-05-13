@@ -1,5 +1,10 @@
 language: php
 
+branches:
+    only:
+        - master
+        - hotfix-build    
+
 jobs:
   include:
     - php: 7.1
