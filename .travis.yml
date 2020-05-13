@@ -20,7 +20,7 @@ script:
 
 jobs:
   include:
-    - php: 7.2
+    - php: 7.1
       env: TYPE=phpstan
       script:
         - composer install
