@@ -25,5 +25,6 @@ matrix:
     - php: 7.1
         name: phpstan
         script:
+          - composer install
           - vendor/bin/phpstan analyse
   fast_finish: true
