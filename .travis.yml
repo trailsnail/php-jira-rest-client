@@ -1,8 +1,22 @@
 language: php
 
+php:
+  - 7.1
+  - 7.2
+  - 7.3
+  - 7.4
+
 before_install:
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction --prefer-dist
+
+before_script:
+  - cp .env.example .env
+
+script:
+  - ./vendor/bin/phpunit --verbose tests/MockTest
+  - ./vendor/bin/phpunit --verbose tests/SerializeTest
+  - ./vendor/bin/phpunit --verbose tests/MapperTest
 
 jobs:
   include:
@@ -13,12 +27,4 @@ jobs:
         - composer require --dev phpstan/phpstan-shim --working-dir "$HOME/.phpstan"
       script:
         - composer install
-        - $HOME/.phpstan/vendor/bin/phpstan analyse -c app/shop/phpstan.neon.dist
-        - $HOME/.phpstan/vendor/bin/phpstan analyse -c app/portal/phpstan.neon.dist
-    - php: 7.0 # important: same php version as composer.platform.config - otherwise style fixing might introduce syntax errors
-      env: TYPE=CS-CHECK
-      install:
-        - mkdir -p "$HOME/.php-cs-fixer"
-        - composer require --dev friendsofphp/php-cs-fixer --working-dir "$HOME/.php-cs-fixer"
-      script:
-        - php "$HOME/.php-cs-fixer/vendor/bin/php-cs-fixer" fix --cache-file "$HOME/.php-cs-fixer/.php_cs.cache" --dry-run --diff --verbose
+        - vendor/bin/phpstan analyse
