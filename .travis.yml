@@ -25,8 +25,3 @@ jobs:
       script:
         - composer install
         - vendor/bin/phpstan analyse
-
-matrix:
-  #  allow_failures:
-  #    - php: 7.5
-  fast_finish: true
