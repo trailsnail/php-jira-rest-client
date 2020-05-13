@@ -18,12 +18,14 @@ script:
   - ./vendor/bin/phpunit --verbose tests/SerializeTest
   - ./vendor/bin/phpunit --verbose tests/MapperTest
 
-matrix:
-#  allow_failures:
-#    - php: 7.5
+jobs:
   include:
     - php: 7.1
         name: phpstan
         script:
           - vendor/bin/phpstan analyse
+
+matrix:
+#  allow_failures:
+#    - php: 7.5
   fast_finish: true
