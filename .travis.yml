@@ -6,11 +6,19 @@ before_install:
 
 jobs:
   include:
-    - php: 7.1
-        env: TYPE=phpstan
-          install:
-            - mkdir -p "$HOME/.phpstan"
-            - composer require --dev phpstan/phpstan-shim --working-dir "$HOME/.phpstan"
-          script:
-            - composer install
-            - vendor/bin/phpstan analyse
+    - php: 7.2
+      env: TYPE=phpstan
+      install:
+        - mkdir -p "$HOME/.phpstan"
+        - composer require --dev phpstan/phpstan-shim --working-dir "$HOME/.phpstan"
+      script:
+        - composer install
+        - $HOME/.phpstan/vendor/bin/phpstan analyse -c app/shop/phpstan.neon.dist
+        - $HOME/.phpstan/vendor/bin/phpstan analyse -c app/portal/phpstan.neon.dist
+    - php: 7.0 # important: same php version as composer.platform.config - otherwise style fixing might introduce syntax errors
+      env: TYPE=CS-CHECK
+      install:
+        - mkdir -p "$HOME/.php-cs-fixer"
+        - composer require --dev friendsofphp/php-cs-fixer --working-dir "$HOME/.php-cs-fixer"
+      script:
+        - php "$HOME/.php-cs-fixer/vendor/bin/php-cs-fixer" fix --cache-file "$HOME/.php-cs-fixer/.php_cs.cache" --dry-run --diff --verbose
