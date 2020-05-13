@@ -23,5 +23,4 @@ jobs:
     - php: 7.1
       env: TYPE=phpstan
       script:
-        - composer install
         - vendor/bin/phpstan analyse
