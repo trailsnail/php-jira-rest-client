@@ -1,31 +1,30 @@
 language: php
 
-php:
-  - 7.1
-  - 7.2
-  - 7.3
-  - 7.4
+branches:
+    only:
+        - master
+        - hotfix-build        
 
 before_install:
-  - travis_retry composer self-update
-  - travis_retry composer install --no-interaction --prefer-dist
-
-before_script:
-  - cp .env.example .env
-
-script:
-  - ./vendor/bin/phpunit --verbose tests/MockTest
-  - ./vendor/bin/phpunit --verbose tests/SerializeTest
-  - ./vendor/bin/phpunit --verbose tests/MapperTest
+  - echo 'extension = "memcached.so"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - phpenv config-rm xdebug.ini || echo "xdebug not available"
+  - composer config --global --auth http-basic.repo.packagist.com token 07e2106f9f922b4bc11507c6840fc6d0ab19280b16ff0be6dc2255adb8e3
 
 jobs:
   include:
-    - php: 7.1
-        name: phpstan
-        script:
-          - vendor/bin/phpstan analyse
-
-matrix:
-  #  allow_failures:
-  #    - php: 7.5
-  fast_finish: true
+    - php: 7.2
+      env: TYPE=phpstan
+      install:
+        - mkdir -p "$HOME/.phpstan"
+        - composer require --dev phpstan/phpstan-shim --working-dir "$HOME/.phpstan"
+      script:
+        - composer install
+        - $HOME/.phpstan/vendor/bin/phpstan analyse -c app/shop/phpstan.neon.dist
+        - $HOME/.phpstan/vendor/bin/phpstan analyse -c app/portal/phpstan.neon.dist
+    - php: 7.0 # important: same php version as composer.platform.config - otherwise style fixing might introduce syntax errors
+      env: TYPE=CS-CHECK
+      install:
+        - mkdir -p "$HOME/.php-cs-fixer"
+        - composer require --dev friendsofphp/php-cs-fixer --working-dir "$HOME/.php-cs-fixer"
+      script:
+        - php "$HOME/.php-cs-fixer/vendor/bin/php-cs-fixer" fix --cache-file "$HOME/.php-cs-fixer/.php_cs.cache" --dry-run --diff --verbose
